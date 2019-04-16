@@ -1,10 +1,11 @@
 import curses
 import time
+import random 
 from IPython import embed
 
 class MovableBody:
     
-    def __init__(self, x = 1, y = 1, x_speed = 1, y_speed = 1):
+    def __init__(self, x = 1, y = 1, x_speed = 0, y_speed = 0):
         self.x = x
         self.y = y
         self.x_speed = x_speed
@@ -21,7 +22,7 @@ class MovableBody:
 class Ball(MovableBody): 
 
     def __init__(self):
-        super().__init__()
+        super().__init__(1, 1 , 1, 1)
     
     def display(self):
         return "\u25CF"
@@ -53,31 +54,53 @@ class Paddle(MovableBody):
 #     def __init__(self):
 #         pass 
 
+class Block(MovableBody):
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+
+    def display(self):
+        return "\u2580"
+
 
 class Game:
     def __init__(self):
         self.paddle = Paddle()
         self.ball = Ball()
-    
+        self.blocks = self.create_blocks()
+
+    def create_blocks(self):
+        blocks = []
+        for i in range(125):
+            for j in range(10):
+                blocks.append(Block(i + 25, j))
+        return blocks
+        
 
     def play(self, window):
         window.nodelay(True)
+        # we don't actually want to see the cursor so hide it. 
         curses.curs_set(0)
         while True:
-            # we don't actually want to see the cursor so hide it. 
 
             key = window.getch()
             window.clear()
             max_yx = window.getmaxyx()
-            # embed()
+
             self.ball.check_edges(max_yx[1], max_yx[0])
             self.paddle.handle_key_press(key)
             self.ball.update()    
 
             if self.ball.intersect(self.paddle, 6):
+                prob = random.random()
                 self.ball.y_speed *= -1
 
-            # display
+            # display blocks 
+            for i, block in enumerate(self.blocks):
+                if self.ball.intersect(block):
+                    del self.blocks[i]
+                window.addstr(block.y, block.x, block.display())
+            
             window.addstr(self.ball.y, self.ball.x, self.ball.display())
             window.addstr(self.paddle.y, self.paddle.x, self.paddle.display())
 
