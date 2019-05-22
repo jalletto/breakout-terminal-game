@@ -95,10 +95,6 @@ class Game:
         for i, block in enumerate(self.blocks):
             self.window.addstr(block.y, block.x, block.display())
         
-
-
-        
-
     def play(self):
         self.window.nodelay(True)
         # we don't actually want to see the cursor so hide it. 
@@ -121,11 +117,7 @@ class Game:
             
             self.window.addstr(self.ball.y, self.ball.x, self.ball.display())
             self.window.addstr(self.paddle.y, self.paddle.x, self.paddle.display())
-            # ball_xy = f"ball xy: {str((self.ball.x, self.ball.y))}"
-            # self.window.addstr(2,2, ball_xy)
-            # self.window.addstr(5,2, f'refreshes: {refresh}')
-
-        
+         
             self.window.refresh()
             time.sleep(.09)
 
@@ -133,8 +125,5 @@ class Game:
 def main(window):
     Game(window).play()
 
-    
-        
-       
 
 curses.wrapper(main)
