@@ -2,39 +2,8 @@ import curses
 import time
 import random 
 from IPython import embed
-
-class MovableBody:
-    
-    def __init__(self, x = 1, y = 1, x_speed = 0, y_speed = 0):
-        self.x = x
-        self.y = y
-        self.x_speed = x_speed
-        self.y_speed = y_speed
-
-    def update(self):
-        self.x += self.x_speed
-        self.y += self.y_speed
-
-    def intersect(self, body, x_off = 0, y_off = 0):
-        return body.x >= self.x - x_off and body.x <= self.x + x_off and body.y >= self.y - y_off and body.y <= self.y + y_off
-
-
-class Ball(MovableBody): 
-
-    def __init__(self):
-        super().__init__(4, 4 , 1, 1)
-    
-    def display(self):
-        return "\u25CF"
-
-    def check_edges(self, max_width, max_height):
-        if self.x <= 0 or self.x >= max_width - 2: 
-            self.x_speed *= -1
-        
-        if self.y <= 0 or self.y >= max_height - 2:
-            self.y_speed *= -1
-
-    
+from ball import Ball 
+from moveable_body import MovableBody
 
 class Paddle(MovableBody):
 
@@ -101,6 +70,7 @@ class Game:
         refresh = 0
         curses.curs_set(0)
         while True:
+            self.window.border()
             refresh += 1
             key = self.window.getch()
             self.window.clear()
@@ -119,7 +89,7 @@ class Game:
             self.window.addstr(self.paddle.y, self.paddle.x, self.paddle.display())
          
             self.window.refresh()
-            time.sleep(.09)
+            time.sleep(.1)
 
 
 def main(window):
